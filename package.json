@@ -1,7 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "start": "node -r dotenv/config server"
+    "start": "node -r dotenv/config server 5000",
+    "ngrok": "ngrok http 5000"
   },
   "devDependencies": {
     "body-parser": "^1.19.0",
