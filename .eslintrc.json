@@ -1,6 +1,6 @@
 {
 	"env": {
- 		"node": true,
+		"node": true,
 		"jest/globals": true
 
 	},
@@ -12,5 +12,7 @@
 		"sourceType": "module"
 	},
 	"plugins": ["jest"],
-	"rules": {}
+	"rules": {
+		"no-console": 0
+	}
 }
