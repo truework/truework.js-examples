@@ -7,14 +7,19 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "express": "^4.17.1",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.25.2",
+    "espree": "^9.0.0",
     "jest": "^27.3.1",
-    "node-fetch": "^2.6.5",
     "supertest": "^6.1.6"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
-    "ngrok": "^4.2.2"
+    "eslint-plugin-jest": "^25.2.2",
+    "express": "^4.17.1",
+    "ngrok": "^4.2.2",
+    "node-fetch": "^2.6.5"
   },
   "jest": {
     "testEnvironment": "node",

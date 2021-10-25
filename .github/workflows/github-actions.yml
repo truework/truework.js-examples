@@ -2,6 +2,8 @@ name: Run jest tests
 on: push
 jobs:
   build:
+    env:
+      SECURITY_TOKEN: FnwaBrkdPFYwqycSRv_iBrqjmKeM_fxJWzNutNZi_Fg
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

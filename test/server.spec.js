@@ -1,13 +1,14 @@
-const app = require('../server.js');
 const supertest = require('supertest');
+
+const app = require('../server');
+
 const requestWithSupertest = supertest(app);
-const fetch = require('node-fetch');
 
 // TODO: For tests, ensure env SECURITY_TOKEN=FnwaBrkdPFYwqycSRv_iBrqjmKeM_fxJWzNutNZi_Fg
 
 describe('Webhook Endpoint', () => {
   it('POST /webhook should show all users', async () => {
-    const state_change_processing = {
+    const stateChangeProcessing = {
       hook: {
         id: 68,
         event: 'verification_request.state.change',
@@ -24,7 +25,7 @@ describe('Webhook Endpoint', () => {
 
     const res = await requestWithSupertest
       .post('/webhook')
-      .send(state_change_processing);
+      .send(stateChangeProcessing);
     expect(res.status).toEqual(200);
   });
 
@@ -33,10 +34,8 @@ describe('Webhook Endpoint', () => {
     expect(res.status).toEqual(403);
   });
 
-	it('should have a GET /token endpoint', async () => {
+  it('should have a GET /token endpoint', async () => {
     const res = await requestWithSupertest.get('/token');
     expect(res.status).toEqual(200);
   });
-
 });
-
