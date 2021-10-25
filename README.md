@@ -27,7 +27,7 @@ pass as an environment variable when running `npm start`.
 To run the server on port `5000`:
 
 ```bash
-TW_SANDBOX_API_TOKEN=YOUR_API_TOKEN_HERE npm start -- 5000
+npm start
 ```
 
 Then open `http://localhost:5000` in a web browser.
@@ -40,10 +40,12 @@ The Express server is configured to listen for
 this endpoint reachable by Truework.com for testing:
 
 ```bash
-./ngrok http 5000
+npm start
 
-Forwarding                    http://example.ngrok.io -> http://localhost:5000
+server running on http://localhost:5000, https://4c95-173-195-79-50.ngrok.io
 ```
 
 Then, configure Truework to call the publicly reachable webhook address e.g.
-`http://example.ngrok.io/webhook`
+`http://4c95-173-195-79-50.ngrok.io/webhook`
+
+For webhooks to be secure, ensure that you copy the 'token' key to the `SECURITY_TOKEN` environment variable, so you validate each request came from the TrueworkAPIs.

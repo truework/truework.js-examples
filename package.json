@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "node -r dotenv/config server 5000",
+    "start": "node -r dotenv/config index",
     "ngrok": "ngrok http 5000",
     "test": "jest"
   },
