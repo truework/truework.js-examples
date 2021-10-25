@@ -1,0 +1,15 @@
+name: Run jest tests
+on: push
+jobs:
+  test:
+    env:
+      SECURITY_TOKEN: FnwaBrkdPFYwqycSRv_iBrqjmKeM_fxJWzNutNZi_Fg
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      run: npm ci
+    - name: Run tests
+      run: npm test
+    - name: Run Linter
+      run: npx eslint . --ext .js,.jsx,.ts,.tsx
