@@ -15,7 +15,6 @@ const jsonParser = express.json();
 app
   .use(express.static(path.join(__dirname, 'static')))
   .get('/token', async (req, res) => {
-    // What is this endpoint for?
     const response = await fetch(
       'https://api.truework-sandbox.com/credentials/session',
       {
@@ -49,11 +48,12 @@ app.post('/webhook', jsonParser, async (req, res) => {
   if (
     // Verify that there's a security token provided
     // so we don't accept or interpret out of band requests.
-    req.body.data?.credentials_session_token === process.env.SECURITY_TOKEN
+    req.get('x-truework-token') === process.env.SECURITY_TOKEN
   ) {
+    console.log(`Received webhook\n${JSON.stringify(req.body, null, 2)}`);
     if (req.body.data.state === 'completed') {
       // if the verification is completed, get the data from the api
-      const { verificationRequestId } = req.body.data;
+      const verificationRequestId = req.body.data.verification_request_id;
       const response = await fetch(
         `https://api.truework-sandbox.com/verification-requests/${verificationRequestId}`,
         {
@@ -65,19 +65,20 @@ app.post('/webhook', jsonParser, async (req, res) => {
         },
       );
       console.log(
-        `VERIFICATION DATA FROM TRUEWORK - Not from webhook/n${await response.json()}`,
+        `Note: Verification Data from Truework (not from webhook):\n${JSON.stringify(await response.json(), null, 2)}`,
       );
       res.send();
     } else {
       res.send();
     }
+  } else {
+    console.log(
+      `Rejected webhook without valid request_id. Body: ${JSON.stringify(
+        req.body,
+      )}`,
+    );
+    res.status(403).send();
   }
-  console.log(
-    `Rejected webhook without valid request_id. Body: ${JSON.stringify(
-      req.body,
-    )}`,
-  );
-  res.status(403).send();
 });
 
 module.exports = app;
