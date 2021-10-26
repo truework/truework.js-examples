@@ -26,7 +26,10 @@ describe('Webhook Endpoint', () => {
 
     const res = await requestWithSupertest
       .post('/webhook')
-      .set({ 'x-truework-token': 'wN6mY3262zRt0TE9ynPnmxJhEJ8G2tX2UBsDS1VTM5II10eHB28OeaoQEaUzcp_w-CDOlVcD6YdU8rDk2b-OPQ' })
+      .set({
+        'x-truework-token':
+          'wN6mY3262zRt0TE9ynPnmxJhEJ8G2tX2UBsDS1VTM5II10eHB28OeaoQEaUzcp_w-CDOlVcD6YdU8rDk2b-OPQ',
+      })
       .send(stateChangeProcessing);
     expect(res.status).toEqual(200);
   });
