@@ -19,7 +19,7 @@
     "eslint-plugin-jest": "^25.2.2",
     "express": "^4.17.1",
     "ngrok": "^4.2.2",
-    "node-fetch": "^2.6.5"
+    "node-fetch": "^2.6.7"
   },
   "jest": {
     "testEnvironment": "node",
