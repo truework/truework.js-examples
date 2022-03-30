@@ -24,7 +24,7 @@ You'll also need to configure two environment variables. These can be set by cop
 
 - `TW_SANDBOX_API_TOKEN` — an API key created on your [Truework user settings page](https://www.truework.com/docs/getting-started/api-keys)
 - `SECURITY_TOKEN` — generated for you when you configure a webhook in your
-    Truework user settings
+    Truework user settings. Comma Separated.
 
 ## Running the server
 

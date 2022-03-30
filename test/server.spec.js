@@ -1,14 +1,16 @@
 const supertest = require('supertest');
 
+const tokens = [
+  'wN6mY3262zRt0TE9ynPnmxJhEJ8G2tX2UBsDS1VTM5II10eHB28OeaoQEaUzcp_w-CDOlVcD6YdU8rDk2b-OPQ',
+  'b1kZINxckg1B75mVU_HjpxCmqeLvLx4ZYpZ5c7NeXM3OILaZbYgVRqkXLWHKZ7SR3enrN1WUGnQKfoqcJBDsLQ',
+];
+process.env.SECURITY_TOKEN = tokens.join(',');
 const app = require('../server');
 
 const requestWithSupertest = supertest(app);
 
-// TODO: For tests, ensure env
-// SECURITY_TOKEN=wN6mY3262zRt0TE9ynPnmxJhEJ8G2tX2UBsDS1VTM5II10eHB28OeaoQEaUzcp_w-CDOlVcD6YdU8rDk2b-OPQ
-
 describe('Webhook Endpoint', () => {
-  it('POST /webhook should show all users', async () => {
+  it('POST /webhook should accept valid verification_request.state.change event', async () => {
     const stateChangeProcessing = {
       hook: {
         id: 68,
@@ -29,6 +31,31 @@ describe('Webhook Endpoint', () => {
       .set({
         'x-truework-token':
           'wN6mY3262zRt0TE9ynPnmxJhEJ8G2tX2UBsDS1VTM5II10eHB28OeaoQEaUzcp_w-CDOlVcD6YdU8rDk2b-OPQ',
+      })
+      .send(stateChangeProcessing);
+    expect(res.status).toEqual(200);
+  });
+
+  it('POST /webhook should accept valid credentials_session.state.change event', async () => {
+    const stateChangeProcessing = {
+      hook: {
+        id: 50,
+        event: 'credentials_session.state.change',
+        target: 'https://example.com/webhook',
+      },
+      data: {
+        state: 'success',
+        token: 'GF7UOlmqj_4X4Sui99qvjc6jA-CHEyyhmQlmJ7yIuoM',
+        verification_request_id:
+          'AAAAAAAAAZ0ABz8-Lz-DIPDFfECWdfcOh8GHJQPZGFiSmb1SyxtR2O3z',
+      },
+    };
+
+    const res = await requestWithSupertest
+      .post('/webhook')
+      .set({
+        'x-truework-token':
+          'b1kZINxckg1B75mVU_HjpxCmqeLvLx4ZYpZ5c7NeXM3OILaZbYgVRqkXLWHKZ7SR3enrN1WUGnQKfoqcJBDsLQ',
       })
       .send(stateChangeProcessing);
     expect(res.status).toEqual(200);

@@ -48,7 +48,7 @@ app.post('/webhook', jsonParser, async (req, res) => {
   if (
     // Verify that there's a security token provided
     // so we don't accept or interpret out of band requests.
-    req.get('x-truework-token') === process.env.SECURITY_TOKEN
+    process.env.SECURITY_TOKEN.split(',').includes(req.get('x-truework-token'))
   ) {
     console.log(`Received webhook\n${JSON.stringify(req.body, null, 2)}`);
     if (req.body.data.state === 'completed') {
