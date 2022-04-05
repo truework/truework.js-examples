@@ -18,13 +18,15 @@ To get started, first install dependencies:
 npm i
 ```
 
-You'll also need to configure two environment variables. These can be set by copying
-`.env.example` to `.env` and defining the values there, or by passing them to the
-`npm start` command e.g. `TW_SANDBOX_API_TOKEN=... npm start`
+1. Open `index.html` and enter in your publishable key from your [Truework user settings page](https://www.truework.com/docs/getting-started/api-keys).
 
-- `TW_SANDBOX_API_TOKEN` — an API key created on your [Truework user settings page](https://www.truework.com/docs/getting-started/api-keys)
-- `SECURITY_TOKEN` — generated for you when you configure a webhook in your
-    Truework user settings. Comma Separated.
+2. Configure two environment variables.
+
+    - `TW_SANDBOX_API_TOKEN` — an API key created on your [Truework user settings page](https://www.truework.com/docs/getting-started/api-keys)
+    - `SECURITY_TOKENS` — generated for you when you configure a webhook in your
+        Truework user settings. Comma Separated.
+
+    These can be set by copying `.env.example` to `.env` and defining the values there, or by passing them to the `npm start` command e.g. `TW_SANDBOX_API_TOKEN=... npm start`
 
 ## Running the server
 

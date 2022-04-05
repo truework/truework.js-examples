@@ -22,9 +22,9 @@
       document.getElementById("button").addEventListener("click", async () => {
         const { token } = await fetch("/token").then((res) => res.json());
 
-        var credentials = Truework.credentials.init({
+        const credentials = Truework.credentials.init({
           publishableKey:
-            "tw_pk_test_gJbHD7tEwWUoZ8H_KQWKn4rEESHeNhabiosvcij9i0Q", // example key
+            "SET_ME", // example key
           sessionToken: token,
           env: Truework.credentials.Env.Sandbox,
         });
