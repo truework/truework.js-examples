@@ -34,7 +34,7 @@ app
   .use(express.static(path.join(__dirname, 'static')))
   .get('/token', async (req, res) => {
     const response = await fetch(
-      'https://api.truework.com/credentials/session',
+      'https://api.truework-sandbox.com/credentials/session',
       {
         method: 'POST',
         headers: {
@@ -87,7 +87,7 @@ app.post('/webhook', jsonParser, async (req, res) => {
   // if the verification is completed, get the data from the api
   if (verificationRequestId !== '') {
     const response = await fetch(
-      `https://api.truework.com/verification-requests/${verificationRequestId}`,
+      `https://api.truework-sandbox.com/verification-requests/${verificationRequestId}`,
       {
         headers: {
           Authorization: `Bearer ${TOKEN}`,
