@@ -27,7 +27,7 @@ const USER_PAYLOAD = {
       name: 'Acme Inc',
     },
   },
-}
+};
 
 const jsonParser = express.json();
 app
@@ -44,12 +44,17 @@ app
         body: JSON.stringify(USER_PAYLOAD),
       }
     );
-    console.info(`Session Creation Response:`);
-    console.dir(response, null, 2, true);
-    if (!response.status === 200) {
-      res.status(500).json({ message: 'Error creating session' });
-      return;
+    if (response.status !== 200) {
+      console.log(response.status, response.statusText, response.url);
+      return res.status(500).json({ message: 'Error creating session' });
     }
+    console.info(`Session Creation Response:`);
+    console.log(
+      response.status,
+      response.statusText,
+      response.url,
+      response.body.data
+    );
     return res.json(await response.json()).send();
   });
 
@@ -86,22 +91,26 @@ app.post('/webhook', jsonParser, async (req, res) => {
   }
   // if the verification is completed, get the data from the api
   if (verificationRequestId !== '') {
-    const response = await fetch(
-      `https://api.truework-sandbox.com/verification-requests/${verificationRequestId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-          Accept: 'application/json; version=2020-12-07',
-        },
+    try {
+      const response = await fetch(
+        `https://api.truework-sandbox.com/verification-requests/${verificationRequestId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+            Accept: 'application/json; version=2020-12-07',
+          },
+        }
+      );
+      if (!response.status === 200) {
+        return console.log(response.status, response.statusText, response.url);
       }
-    );
-    if (!response.status === 200) {
-      return console.log(response.status, response.statusText, response.url);
+      const data = await response.json();
+      console.info(
+        `Received verification request data:\n${JSON.stringify(data, null, 2)}`
+      );
+    } catch (error) {
+      console.info(`Received invalid verification request data:\n${error}`);
     }
-    const data = await response.json();
-    console.info(
-      `Received verification request data:\n${JSON.stringify(data, null, 2)}`
-    );
   }
 
   return;
