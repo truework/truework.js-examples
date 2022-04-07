@@ -20,7 +20,10 @@
 
     <script>
       document.getElementById("button").addEventListener("click", async () => {
-        const { token } = await fetch("/token").then((res) => res.json());
+        const { token } = await fetch("/token").then((res) => res.json()).catch(() => {
+          alert("Could not fetch token");
+          return {};
+        });
 
         const credentials = Truework.credentials.init({
           publishableKey:
