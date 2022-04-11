@@ -1,12 +1,14 @@
 {
   "private": true,
   "scripts": {
+    "prepare": "husky install",
     "start": "node index",
     "ngrok": "ngrok http 3000",
     "test": "jest",
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "husky": "^7.0.4",
     "jest": "^27.3.1",
     "prettier": "^2.6.2",
     "supertest": "^6.1.6"
