@@ -3,20 +3,11 @@
   "scripts": {
     "start": "node index",
     "ngrok": "ngrok http 3000",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write ."
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-jest": "^25.2.2",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "espree": "^9.0.0",
     "jest": "^27.3.1",
-    "nodemon": "^2.0.15",
     "prettier": "^2.6.2",
     "supertest": "^6.1.6"
   },

@@ -1,7 +1,7 @@
-const app = require('./server')
+const app = require("./server");
 
-const { PORT } = process.env
+const { PORT } = process.env;
 
 app.listen(PORT, () => {
-  console.info(`Truework.js demo server running on http://localhost:${PORT}\n`)
-})
+  console.info(`Truework.js demo server running on http://localhost:${PORT}\n`);
+});
