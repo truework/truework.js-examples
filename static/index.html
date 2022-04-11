@@ -30,7 +30,7 @@
         const credentials = Truework.credentials.init({
           publishableKey: "SET_ME", // example key
           sessionToken: token,
-          //env: Truework.credentials.Env.Sandbox,
+          env: Truework.credentials.Env.Sandbox,
         });
 
         credentials.onOpen(function () {
