@@ -1,8 +1,7 @@
-const app = require("./server")
+const app = require('./server')
 
-const port = 5000;
-(async () => {
-  app.listen(port, () => {
-    console.log(`server running on http://localhost:${port}`)
-  })
-})()
+const { PORT } = process.env
+
+app.listen(PORT, () => {
+  console.info(`Truework.js demo server running on http://localhost:${PORT}\n`)
+})
