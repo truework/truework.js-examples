@@ -13,18 +13,22 @@
 
     <script src="https://js.truework.com/v1"></script>
   </head>
-  <body class="bg-light" style="height: 100vh;">
+  <body class="bg-light" style="height: 100vh">
     <div class="h f aic jcc">
       <button id="button">Open Credentials Widget</button>
     </div>
 
     <script>
       document.getElementById("button").addEventListener("click", async () => {
-        const { token } = await fetch("/token").then((res) => res.json());
+        const { token } = await fetch("/token")
+          .then((res) => res.json())
+          .catch(() => {
+            alert("Could not fetch token");
+            return {};
+          });
 
-        var credentials = Truework.credentials.init({
-          publishableKey:
-            "tw_pk_test_gJbHD7tEwWUoZ8H_KQWKn4rEESHeNhabiosvcij9i0Q", // example key
+        const credentials = Truework.credentials.init({
+          publishableKey: "SET_ME", // example key
           sessionToken: token,
           env: Truework.credentials.Env.Sandbox,
         });

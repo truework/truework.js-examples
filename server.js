@@ -1,83 +1,124 @@
-#! /usr/bin/env node
+require("dotenv").config();
+require("cross-fetch/polyfill");
 
-const path = require('path');
-const express = require('express');
+const path = require("path");
+const express = require("express");
+const { gretch } = require("gretchen");
 
 const app = express();
-const fetch = require('node-fetch');
-require('dotenv').config();
+const API_BASE_URL = "https://api.truework-sandbox.com";
+const { TW_SANDBOX_API_TOKEN, SECURITY_TOKENS } = process.env;
 
-const TOKEN = process.env.TW_SANDBOX_API_TOKEN;
+if (!process.env.SECURITY_TOKENS) {
+  throw Error("Env 'SECURITY_TOKENS' must be defined");
+}
 
-if (!process.env.SECURITY_TOKEN) { throw Error('Security token must be defined'); }
+const WEBHOOK_TOKENS_ARRAY = SECURITY_TOKENS.split(",");
 
-const jsonParser = express.json();
-app
-  .use(express.static(path.join(__dirname, 'static')))
-  .get('/token', async (req, res) => {
-    const response = await fetch(
-      'https://api.truework-sandbox.com/credentials/session',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'employment',
-          permissible_purpose: 'credit-application',
-          use_case: 'mortgage',
-          target: {
-            first_name: 'Eric',
-            last_name: 'Bailey',
-            social_security_number: '000001234',
-            contact_email: 'eric@truework.com',
-            date_of_birth: '2020-02-02',
-            company: {
-              name: 'Truework',
-            },
-          },
-        }),
+app.use(express.static(path.join(__dirname, "static")));
+app.use(express.json());
+
+app.get("/token", async (req, res) => {
+  const USER_PAYLOAD = {
+    type: "employment",
+    permissible_purpose: "credit-application",
+    use_case: "mortgage",
+    target: {
+      first_name: "Jane",
+      last_name: "Doe",
+      social_security_number: "000-20-0000",
+      contact_email: "jane@example.com",
+      date_of_birth: "2020-02-02",
+      company: {
+        name: "Acme Inc",
       },
-    );
+    },
+  };
 
-    res.json(await response.json());
-  });
-
-app.post('/webhook', jsonParser, async (req, res) => {
-  if (
-    // Verify that there's a security token provided
-    // so we don't accept or interpret out of band requests.
-    req.get('x-truework-token') === process.env.SECURITY_TOKEN
-  ) {
-    console.log(`Received webhook\n${JSON.stringify(req.body, null, 2)}`);
-    if (req.body.data.state === 'completed') {
-      // if the verification is completed, get the data from the api
-      const verificationRequestId = req.body.data.verification_request_id;
-      const response = await fetch(
-        `https://api.truework-sandbox.com/verification-requests/${verificationRequestId}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      console.log(
-        `Note: Verification Data from Truework (not from webhook):\n${JSON.stringify(await response.json(), null, 2)}`,
-      );
-      res.send();
-    } else {
-      res.send();
+  const { data, error, status, response } = await gretch(
+    `${API_BASE_URL}/credentials/session`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
+      },
+      json: USER_PAYLOAD,
     }
-  } else {
-    console.log(
-      `Rejected webhook without valid request_id. Body: ${JSON.stringify(
-        req.body,
-      )}`,
+  ).json();
+
+  if (!response.ok) {
+    console.error(
+      `${status} error when creating session:\n${JSON.stringify(
+        error,
+        null,
+        2
+      )}`
     );
-    res.status(403).send();
+    return res.status(500).json({ message: "Error creating session" });
+  }
+
+  console.info(`Session created:\n${JSON.stringify(data, null, 2)}`);
+
+  res.json(data).send();
+});
+
+app.post("/webhook", async (req, res) => {
+  const WEBHOOK_TOKEN = req.get("x-truework-token");
+
+  /*
+   * Verify that there's a security token provided so we don't accept or
+   * interpret out of band requests.
+   */
+  if (!WEBHOOK_TOKENS_ARRAY.includes(WEBHOOK_TOKEN)) {
+    console.warn(
+      `Rejected webhook without valid token:\n${JSON.stringify(
+        req.body,
+        null,
+        2
+      )}`
+    );
+    return res.status(403).send();
+  }
+
+  /*
+   * Otherwise ACK immediately
+   */
+  res.send();
+
+  console.info(`Received webhook:\n${JSON.stringify(req.body, null, 2)}`);
+
+  /*
+   * If the verification is completed, get the data from the api
+   */
+  if (
+    req.body.hook.event === "verification_request.state.change" &&
+    req.body.data.state === "completed"
+  ) {
+    const id = req.body.data.verification_request_id;
+    const { status, data, error, response } = await gretch(
+      `${API_BASE_URL}/verification-requests/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
+          Accept: "application/json; version=2020-12-07",
+        },
+      }
+    ).json();
+
+    if (!response.ok || !data) {
+      console.error(
+        `${status} error when fetching verification:\n${JSON.stringify(
+          error,
+          null,
+          2
+        )}`
+      );
+    } else if (data) {
+      console.info(
+        `Received verification data:\n${JSON.stringify(data, null, 2)}`
+      );
+    }
   }
 });
 

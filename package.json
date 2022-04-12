@@ -1,25 +1,24 @@
 {
   "private": true,
   "scripts": {
-    "start": "node -r dotenv/config index",
-    "ngrok": "ngrok http 5000",
-    "test": "jest"
+    "prepare": "husky install",
+    "start": "node index",
+    "ngrok": "ngrok http 3000",
+    "test": "jest",
+    "format": "prettier --write ."
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.25.2",
-    "espree": "^9.0.0",
+    "husky": "^7.0.4",
     "jest": "^27.3.1",
+    "prettier": "^2.6.2",
     "supertest": "^6.1.6"
   },
   "dependencies": {
+    "cross-fetch": "^3.1.5",
     "dotenv": "^10.0.0",
-    "eslint-plugin-jest": "^25.2.2",
     "express": "^4.17.1",
-    "ngrok": "^4.2.2",
-    "node-fetch": "^2.6.7"
+    "gretchen": "^1.5.0",
+    "ngrok": "^4.2.2"
   },
   "jest": {
     "testEnvironment": "node",
