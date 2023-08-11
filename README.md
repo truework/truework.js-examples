@@ -15,10 +15,10 @@ This example has two components:
 To get started, first install dependencies:
 
 ```bash
-npm i
+npm ci
 ```
 
-1. Open `index.html` and enter in your publishable key from your [Truework user settings page](https://www.truework.com/docs/getting-started/api-keys).
+1. Open `static/index.html` and enter in your publishable key from your [Truework user settings page](https://www.truework.com/docs/getting-started/api-keys).
 2. Configure two environment variables.
    - `TW_SANDBOX_API_TOKEN` — an API key created on your [Truework user settings page](https://www.truework.com/docs/getting-started/api-keys)
    - `SECURITY_TOKENS` — tokens generated for you when you configure a webhook in your Truework user settings. Separate these with a single comma.
