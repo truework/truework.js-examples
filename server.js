@@ -20,27 +20,31 @@ app.use(express.json());
 
 app.get("/token", async (req, res) => {
   const USER_PAYLOAD = {
-    type: "employment",
-    permissible_purpose: "credit-application",
-    use_case: "mortgage",
-    target: {
-      first_name: "Jane",
-      last_name: "Doe",
-      social_security_number: "000-20-0000",
-      contact_email: "jane@example.com",
-      date_of_birth: "2020-02-02",
-      company: {
-        name: "Acme Inc",
+    targets: [
+      {
+        companies: [
+          {
+            name: "Acme Corp",
+          },
+        ],
+        contact_email: "jane@example.com",
+        date_of_birth: "2001-08-24",
+        first_name: "Jane",
+        last_name: "Doe",
+        permissible_purpose: "credit-application",
+        social_security_number: "000-20-0000",
+        type: "employment-income",
+        use_case: "mortgage",
       },
-    },
+    ],
   };
 
   const { data, error, status, response } = await gretch(
-    `${API_BASE_URL}/credentials/session`,
+    `${API_BASE_URL}/orders/truework-direct`,
     {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        Accept: "application/json; version=2023-10-30",
         Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
       },
       json: USER_PAYLOAD,
@@ -60,7 +64,11 @@ app.get("/token", async (req, res) => {
 
   console.info(`Session created:\n${JSON.stringify(data, null, 2)}`);
 
-  res.json(data).send();
+  res
+    .json({
+      token: data.truework_direct.targets[0].truework_direct_session_token,
+    })
+    .send();
 });
 
 app.post("/webhook", async (req, res) => {
@@ -91,17 +99,14 @@ app.post("/webhook", async (req, res) => {
   /*
    * If the verification is completed, get the data from the api
    */
-  if (
-    req.body.hook.event === "verification_request.state.change" &&
-    req.body.data.state === "completed"
-  ) {
-    const id = req.body.data.verification_request_id;
+  if (req.body.hook.event === "order.completed") {
+    const id = req.body.data.order_id;
     const { status, data, error, response } = await gretch(
-      `${API_BASE_URL}/verification-requests/${id}`,
+      `${API_BASE_URL}/orders/${id}`,
       {
         headers: {
           Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
-          Accept: "application/json; version=2020-12-07",
+          Accept: "application/json; version=2023-10-30",
         },
       }
     ).json();
