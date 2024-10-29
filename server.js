@@ -7,8 +7,15 @@ const express = require("express");
 const crypto = require("crypto");
 
 const app = express();
-const API_BASE_URL = "https://app.truework.test";
-const { BLEND_APP_KEY } = process.env;
+const Environment = Object.freeze({
+  LOCAL: "local",
+  PROD: "prod"
+});
+const ENV = Environment.LOCAL
+const API_BASE_URL = ENV === Environment.LOCAL ? "https://app.truework.test" : "https://app.truework.com";
+const { BLEND_APP_KEY_LOCAL, BLEND_APP_KEY_PROD } = process.env;
+const BLEND_APP_KEY = ENV === Environment.LOCAL ? BLEND_APP_KEY_LOCAL : BLEND_APP_KEY_PROD;
+const publishableKey = ENV === Environment.LOCAL ? "tw_pk_test_NnzZ3PF3fIOLjuqXi4Cio8KYA0fvouuhmeR8D1Vf2Do" : "tw_pk_Koqv71QCVIx1pLn9KtHZU2IRCtsrY3U8h3CQ3eXoyRk";
 
 app.use(express.static(path.join(__dirname, "static")));
 app.use(express.json());
@@ -20,7 +27,7 @@ const blendOrderPayload = {
   "person": {
     "firstName": "John",
     "lastName": "Doe",
-    "ssn": "000-20-0000",
+    "ssn": "000-31-0000",
     "dob": "2001-11-11",
     "address": {
       "lineText1": "415 Kearny Street",
@@ -43,7 +50,7 @@ const blendOrderPayload = {
   "employmentOnly": false,
   "isPrequal": false,
   "providerSpecificParams": {
-    "publishableKey": "tw_pk_test_NnzZ3PF3fIOLjuqXi4Cio8KYA0fvouuhmeR8D1Vf2Do",
+    "publishableKey": publishableKey,
   }
 }
 
@@ -109,6 +116,50 @@ app.get("/reboot", async (req, res) => {
       "Authorization": `Bearer ${BLEND_APP_KEY}`,
       "Content-Type": "application/json",
     },
+  })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          console.error(
+              `${response.status} error when creating session:\n${JSON.stringify(
+                  response.json(),
+                  null,
+                  2
+              )}`
+          );
+          return res.status(500).json({ message: "Error fetching session" });
+        }
+      })
+      .then((data) => {
+        console.info(`Session fetched:\n${JSON.stringify(data, null, 2)}`);
+        res.json({
+          params: data.sessionParameters,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        return res.status(500).json({ message: "Error fetching session" });
+      });
+});
+
+app.get("/reverify", async (req, res) => {
+  if (!orderId) {
+    return res.status(500).json({ message: "No orderId to reverify" });
+  }
+  await fetch(`${API_BASE_URL}/api/blend/orders/${orderId}/reverify`, {
+    method: "POST",
+    headers: {
+      "X-Request-ID": crypto.randomUUID(),
+      "Authorization": `Bearer ${BLEND_APP_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      "employmentOnly": true,
+      "providerSpecificParams": {
+        "publishableKey": publishableKey,
+      }
+    }),
   })
       .then((response) => {
         if (response.ok) {

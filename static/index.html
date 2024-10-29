@@ -12,12 +12,14 @@
     <link rel="stylesheet" href="style.css" />
 
     <script src="http://localhost:4001/script.js"></script>
+<!--    <script src="https://js.truework.com/v1"></script>-->
   </head>
   <body class="bg-light" style="height: 100vh">
     <div class="h f aic jcc">
       <button id="button" class="m2">Open Credentials Widget</button>
       <button id="military-button" class="m2">Open Military Widget</button>
       <button id="reboot-button" class="m2">Reboot Widget</button>
+      <button id="reverify-button" class="m2">Reverify</button>
     </div>
 
     <script>
@@ -55,6 +57,22 @@
       });
       document.getElementById("reboot-button").addEventListener("click", async () => {
         const { params } = await fetch("/reboot")
+          .then((res) => res.json())
+          .catch(() => {
+            alert("Could not fetch token");
+            return {};
+          });
+
+        const callbacks = {
+          onEvent: (event) => console.log(`onEvent ${JSON.stringify(event, null, 2)}`),
+          onComplete: (data) => console.log(`onComplete ${JSON.stringify(data, null, 2)}`),
+        }
+
+        const blend = Truework.direct.blend.init(params, callbacks);
+        blend.open();
+      });
+      document.getElementById("reverify-button").addEventListener("click", async () => {
+        const { params } = await fetch("/reverify")
           .then((res) => res.json())
           .catch(() => {
             alert("Could not fetch token");
