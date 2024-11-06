@@ -9,13 +9,13 @@ const crypto = require("crypto");
 const app = express();
 const Environment = Object.freeze({
   LOCAL: "local",
-  PROD: "prod"
+  PROD: "prod",
 });
 const ENV = Environment.LOCAL
 const API_BASE_URL = ENV === Environment.LOCAL ? "https://app.truework.test" : "https://app.truework.com";
-const { BLEND_APP_KEY_LOCAL, BLEND_APP_KEY_PROD } = process.env;
+const { BLEND_APP_KEY_LOCAL, BLEND_APP_KEY_PROD, PUBLISHABLE_KEY_LOCAL, PUBLISHABLE_KEY_PROD } = process.env;
 const BLEND_APP_KEY = ENV === Environment.LOCAL ? BLEND_APP_KEY_LOCAL : BLEND_APP_KEY_PROD;
-const publishableKey = ENV === Environment.LOCAL ? "tw_pk_test_NnzZ3PF3fIOLjuqXi4Cio8KYA0fvouuhmeR8D1Vf2Do" : "tw_pk_Koqv71QCVIx1pLn9KtHZU2IRCtsrY3U8h3CQ3eXoyRk";
+const publishableKey = ENV === Environment.LOCAL ? PUBLISHABLE_KEY_LOCAL : PUBLISHABLE_KEY_PROD;
 
 app.use(express.static(path.join(__dirname, "static")));
 app.use(express.json());
@@ -27,7 +27,7 @@ const blendOrderPayload = {
   "person": {
     "firstName": "John",
     "lastName": "Doe",
-    "ssn": "000-31-0000",
+    "ssn": "000-20-0000",
     "dob": "2001-11-11",
     "address": {
       "lineText1": "415 Kearny Street",
@@ -102,6 +102,7 @@ app.get("/military-session", async (req, res) => {
     ...blendOrderPayload,
     "loginEntityIdentifier": "MILITARY",
   }
+  payload.person.ssn = "666-85-8238"
   await makeRequest(payload, res);
 });
 
@@ -178,7 +179,7 @@ app.get("/reverify", async (req, res) => {
       .then((data) => {
         console.info(`Session fetched:\n${JSON.stringify(data, null, 2)}`);
         res.json({
-          params: data.sessionParameters,
+          params: data.sessionData.sessionParameters,
         });
       })
       .catch((error) => {
