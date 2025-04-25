@@ -144,6 +144,46 @@ app.get("/reboot", async (req, res) => {
       });
 });
 
+
+app.get("/reboot-military", async (req, res) => {
+  if (!orderId) {
+    return res.status(500).json({ message: "No orderId to reboot" });
+  }
+  await fetch(`${API_BASE_URL}/api/blend/orders/${orderId}/session`, {
+    method: "POST",
+    headers: {
+      "X-Request-ID": crypto.randomUUID(),
+      "Authorization": `Bearer ${BLEND_APP_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({loginEntityIdentifier: "MILITARY"})
+  })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          console.error(
+              `${response.status} error when creating session:\n${JSON.stringify(
+                  response.json(),
+                  null,
+                  2
+              )}`
+          );
+          return res.status(500).json({ message: "Error fetching session" });
+        }
+      })
+      .then((data) => {
+        console.info(`Session fetched:\n${JSON.stringify(data, null, 2)}`);
+        res.json({
+          params: data.sessionParameters,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        return res.status(500).json({ message: "Error fetching session" });
+      });
+});
+
 app.get("/reverify", async (req, res) => {
   if (!orderId) {
     return res.status(500).json({ message: "No orderId to reverify" });

@@ -19,6 +19,7 @@
       <button id="button" class="m2">Open Credentials Widget</button>
       <button id="military-button" class="m2">Open Military Widget</button>
       <button id="reboot-button" class="m2">Reboot Widget</button>
+      <button id="reboot-military-button" class="m2">Reboot Military Widget</button>
       <button id="reverify-button" class="m2">Reverify</button>
     </div>
 
@@ -62,6 +63,22 @@
             alert("Could not fetch token");
             return {};
           });
+
+        const callbacks = {
+          onEvent: (event) => console.log(`onEvent ${JSON.stringify(event, null, 2)}`),
+          onComplete: (data) => console.log(`onComplete ${JSON.stringify(data, null, 2)}`),
+        }
+
+        const blend = Truework.direct.blend.init(params, callbacks);
+        blend.open();
+      });
+      document.getElementById("reboot-military-button").addEventListener("click", async () => {
+        const { params } = await fetch("/reboot-military")
+                .then((res) => res.json())
+                .catch(() => {
+                  alert("Could not fetch token");
+                  return {};
+                });
 
         const callbacks = {
           onEvent: (event) => console.log(`onEvent ${JSON.stringify(event, null, 2)}`),
