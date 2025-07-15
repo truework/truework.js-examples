@@ -24,10 +24,11 @@ const blendOrderPayload = {
   "customerName": "Blend",
   "useCase": "PERSONAL_LOAN",
   "permissiblePurpose": "WRITTEN_INSTRUCTIONS",
+  "requestedVerificationTypes": ["LOGIN", "MANUAL"],
   "person": {
     "firstName": "John",
     "lastName": "Doe",
-    "ssn": "000-20-0000",
+    "ssn": "666-07-6439",
     "dob": "2001-11-11",
     "address": {
       "lineText1": "415 Kearny Street",
