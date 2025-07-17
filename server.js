@@ -28,7 +28,7 @@ const blendOrderPayload = {
   "person": {
     "firstName": "John",
     "lastName": "Doe",
-    "ssn": "666-07-6439",
+    "ssn": "666-40-7416",
     "dob": "2001-11-11",
     "address": {
       "lineText1": "415 Kearny Street",
