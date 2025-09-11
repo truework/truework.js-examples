@@ -3,7 +3,6 @@ require("cross-fetch/polyfill");
 
 const path = require("path");
 const express = require("express");
-const { gretch } = require("gretchen");
 
 const app = express();
 const API_BASE_URL = "https://api.truework-sandbox.com";
@@ -39,7 +38,7 @@ app.get("/token", async (req, res) => {
     ],
   };
 
-  const { data, error, status, response } = await gretch(
+  const response = await fetch(
     `${API_BASE_URL}/orders/truework-direct`,
     {
       method: "POST",
@@ -47,14 +46,15 @@ app.get("/token", async (req, res) => {
         Accept: "application/json; version=2023-10-30",
         Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
       },
-      json: USER_PAYLOAD,
+      body: JSON.stringify(USER_PAYLOAD),
     }
-  ).json();
+  )
 
+  const data = await response.json().catch(e => undefined)
   if (!response.ok) {
     console.error(
-      `${status} error when creating session:\n${JSON.stringify(
-        error,
+      `${response.status} error when creating session:\n${JSON.stringify(
+        data,
         null,
         2
       )}`
@@ -101,7 +101,7 @@ app.post("/webhook", async (req, res) => {
    */
   if (req.body.hook.event === "order.completed") {
     const id = req.body.data.order_id;
-    const { status, data, error, response } = await gretch(
+    const response = await fetch(
       `${API_BASE_URL}/orders/${id}`,
       {
         headers: {
@@ -109,17 +109,20 @@ app.post("/webhook", async (req, res) => {
           Accept: "application/json; version=2023-10-30",
         },
       }
-    ).json();
+    )
 
-    if (!response.ok || !data) {
+    const data = await response.json().catch(e => undefined)
+    if (!response.ok) {
       console.error(
-        `${status} error when fetching verification:\n${JSON.stringify(
-          error,
+        `${response.status} error when fetching verification:\n${JSON.stringify(
+          data,
           null,
           2
         )}`
       );
-    } else if (data) {
+    }
+
+    if (data) {
       console.info(
         `Received verification data:\n${JSON.stringify(data, null, 2)}`
       );
