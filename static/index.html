@@ -11,7 +11,8 @@
     />
     <link rel="stylesheet" href="style.css" />
 
-    <script src="https://js.truework.com/v1"></script>
+    <!--    <script src="https://js.truework.com/v1"></script>-->
+    <script src="http://localhost:4001/script.js"></script>
   </head>
   <body class="bg-light" style="height: 100vh">
     <div class="h f aic jcc">
@@ -30,7 +31,6 @@
         const credentials = Truework.credentials.init({
           publishableKey: "SET_ME", // example key
           sessionToken: token,
-          env: Truework.credentials.Env.Sandbox,
         });
 
         credentials.onOpen(function () {

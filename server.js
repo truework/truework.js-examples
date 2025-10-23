@@ -5,7 +5,8 @@ const path = require("path");
 const express = require("express");
 
 const app = express();
-const API_BASE_URL = "https://api.truework-sandbox.com";
+// const API_BASE_URL = "https://api.truework-sandbox.com";
+const API_BASE_URL = "https://api.truework.test";
 const { TW_SANDBOX_API_TOKEN, SECURITY_TOKENS } = process.env;
 
 if (!process.env.SECURITY_TOKENS) {
@@ -31,26 +32,27 @@ app.get("/token", async (req, res) => {
         first_name: "Jane",
         last_name: "Doe",
         permissible_purpose: "credit-application",
-        social_security_number: "000-20-0000",
+        social_security_number: "666-40-7416",
         type: "employment-income",
         use_case: "mortgage",
+        allowed_verification_methods: [
+            "credentials",
+            "smart-outreach",
+        ]
       },
     ],
   };
 
-  const response = await fetch(
-    `${API_BASE_URL}/orders/truework-direct`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json; version=2023-10-30",
-        Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
-      },
-      body: JSON.stringify(USER_PAYLOAD),
-    }
-  )
+  const response = await fetch(`${API_BASE_URL}/orders/truework-direct`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json; version=2023-10-30",
+      Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
+    },
+    body: JSON.stringify(USER_PAYLOAD),
+  });
 
-  const data = await response.json().catch(e => undefined)
+  const data = await response.json().catch((e) => undefined);
   if (!response.ok) {
     console.error(
       `${response.status} error when creating session:\n${JSON.stringify(
@@ -101,17 +103,14 @@ app.post("/webhook", async (req, res) => {
    */
   if (req.body.hook.event === "order.completed") {
     const id = req.body.data.order_id;
-    const response = await fetch(
-      `${API_BASE_URL}/orders/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
-          Accept: "application/json; version=2023-10-30",
-        },
-      }
-    )
+    const response = await fetch(`${API_BASE_URL}/orders/${id}`, {
+      headers: {
+        Authorization: `Bearer ${TW_SANDBOX_API_TOKEN}`,
+        Accept: "application/json; version=2023-10-30",
+      },
+    });
 
-    const data = await response.json().catch(e => undefined)
+    const data = await response.json().catch((e) => undefined);
     if (!response.ok) {
       console.error(
         `${response.status} error when fetching verification:\n${JSON.stringify(
