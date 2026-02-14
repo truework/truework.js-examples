@@ -6,7 +6,7 @@ const express = require("express");
 const { gretch } = require("gretchen");
 
 const app = express();
-const API_BASE_URL = "https://api.truework-sandbox.com";
+const API_BASE_URL = "https://api.truework.com";
 const { TW_SANDBOX_API_TOKEN, SECURITY_TOKENS } = process.env;
 
 if (!process.env.SECURITY_TOKENS) {
@@ -23,16 +23,16 @@ app.get("/token", async (req, res) => {
     targets: [
       {
         companies: [
-          {
-            name: "Acme Corp",
-          },
+          // {
+          //   name: "Acme Corp",
+          // },
         ],
         contact_email: "jane@example.com",
         date_of_birth: "2001-08-24",
         first_name: "Jane",
         last_name: "Doe",
         permissible_purpose: "credit-application",
-        social_security_number: "000-20-0000",
+        social_security_number: "000-67-0003",
         type: "employment-income",
         use_case: "mortgage",
       },

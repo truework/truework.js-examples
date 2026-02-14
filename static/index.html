@@ -27,10 +27,10 @@
             return {};
           });
 
-        const credentials = Truework.credentials.init({
-          publishableKey: "SET_ME", // example key
+        const credentials = window.Truework.direct.init({
+          publishableKey: "tw_pk_H5Wrx0mzGSoJJywKTtOtzJ1Zg2bKhES_QqC_nEeY3vg", // example key
           sessionToken: token,
-          env: Truework.credentials.Env.Sandbox,
+          env: Truework.credentials.Env.Production,
         });
 
         credentials.onOpen(function () {
